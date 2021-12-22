@@ -80,26 +80,6 @@ const Index = ({authAxios}) => {
           </Card.Section>
   )
 
-  const home = (
-    <Card.Section>
-      <TextField
-        label="Change file name"
-        value={filename}
-        onChange={handleFilename}
-        placeholder="File name"
-        autoComplete="off"
-      />
-      <br/>
-      <Button>
-        <CSVLink
-          headers={heading}
-          data={row}
-          filename={filename}
-        />Download<CSVLink/>
-      </Button>
-    </Card.Section>
-  )
-
   const mainTabs = [
     {
       id: 'home',
@@ -139,22 +119,12 @@ const Index = ({authAxios}) => {
   ];
 
   let table = ""
-
+  
   if ( selected === 0) {
     table = customerTable;
   } else if (selected === 1) {
 
   } else if (selected === 2) {
-     
-  } 
-
-  let mainContents = ""
-
-  if ( mainTabSelect === 0) {
-    mainContents = home;
-  } else if (mainTabSelect === 1) {
-
-  } else if (mainTabSelect === 2) {
      
   } 
 
@@ -166,9 +136,26 @@ const Index = ({authAxios}) => {
     >
       <Card>
         <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
-          {mainContents}
+          <Card.Section>
+            <TextField
+              label="Change file name"
+              value={filename}
+              onChange={handleFilename}
+              placeholder="File name"
+              autoComplete="off"
+            />
+            <br/>
+            <Button>
+              <CSVLink
+                headers={heading}
+                data={row}
+                filename={filename}
+                target="_blank"
+              >Download</CSVLink>
+            </Button>
+          </Card.Section>
+          {table}
         </Tabs>
-        {table}
       </Card>
     </Page>
     </>
