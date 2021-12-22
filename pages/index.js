@@ -1,6 +1,6 @@
 import React ,{useEffect, useState, useCallback} from 'react';
 import { Page, Card, Tabs, Button, DataTable, TextField } from "@shopify/polaris";
-import { CSVLink } from "react-csv";
+import { CSVLink, CSVDownload } from "react-csv";
 
 const Index = ({authAxios}) => {
 
@@ -80,6 +80,30 @@ const Index = ({authAxios}) => {
           </Card.Section>
   )
 
+  const home = (
+    <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
+      <Card.Section>
+        <TextField
+          label="Change file name"
+          value={filename}
+          onChange={handleFilename}
+          placeholder="File name"
+          autoComplete="off"
+        />
+        <br/>
+        <Button primary>
+          <CSVDownload
+            headers={heading}
+            data={row}
+            filename={filename}
+            target="_blank"
+          />
+        </Button>
+      </Card.Section>
+      {table}
+    </Tabs>
+  )
+
   const mainTabs = [
     {
       id: 'home',
@@ -90,11 +114,11 @@ const Index = ({authAxios}) => {
       content: 'Settings',
     },
     {
-      id: 'prospects-1',
+      id: 'header-rename',
       content: 'Header Rename',
     },
     {
-      id: 'prospects-1',
+      id: 'about',
       content: 'About',
     },
   ]
@@ -119,12 +143,22 @@ const Index = ({authAxios}) => {
   ];
 
   let table = ""
-  
+
   if ( selected === 0) {
     table = customerTable;
   } else if (selected === 1) {
 
   } else if (selected === 2) {
+     
+  } 
+
+  let mainContents = ""
+
+  if ( mainTabSelect === 0) {
+    mainContents = home;
+  } else if (mainTabSelect === 1) {
+
+  } else if (mainTabSelect === 2) {
      
   } 
 
@@ -135,26 +169,7 @@ const Index = ({authAxios}) => {
     title="Options"
     >
       <Card>
-        <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
-          <Card.Section>
-            <TextField
-              label="Change file name"
-              value={filename}
-              onChange={handleFilename}
-              placeholder="File name"
-              autoComplete="off"
-            />
-            <br/>
-            <Button primary>
-              <CSVLink
-                headers={heading}
-                data={row}
-                filename={filename}
-              >Download me</CSVLink>
-            </Button>
-          </Card.Section>
-          {table}
-        </Tabs>
+        {mainContents}
       </Card>
     </Page>
     </>
