@@ -104,11 +104,13 @@ const Index = ({authAxios}) => {
               placeholder="File name"
               autoComplete="off"
             />
-            <CSVLink
-              headers={heading}
-              data={row}
-              filename={filename}
-            >Download me</CSVLink>
+            <Button>
+              <CSVLink
+                headers={heading}
+                data={row}
+                filename={filename}
+              >Download me</CSVLink>
+            </Button>
           </Card.Section>
           <Card.Section>
             <DataTable
