@@ -153,8 +153,8 @@ const Index = ({authAxios}) => {
                 target="_blank"
               >Download</CSVLink>
             </Button>
+            {table}
           </Card.Section>
-          {table}
         </Tabs>
       </Card>
     </Page>
