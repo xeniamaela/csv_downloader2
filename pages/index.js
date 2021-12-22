@@ -5,6 +5,7 @@ import { CSVLink } from "react-csv";
 const Index = ({authAxios}) => {
 
   const [selected, setSelected] = useState(0);
+  const [mainTabSelected, setMainTabSelected] = useState(0);
   const [customers, setCustomers] = useState([]);
   const [filename, setFileName] = useState('');
 
@@ -22,6 +23,11 @@ const Index = ({authAxios}) => {
 
   const handleTabChange = useCallback(
     (selectedTabIndex) => setSelected(selectedTabIndex),
+    [],
+  );
+
+  const handleMainTabChange = useCallback(
+    (selectedTabIndex) => setMainTabSelected(selectedTabIndex),
     [],
   );
 
@@ -66,32 +72,51 @@ const Index = ({authAxios}) => {
 
   const customerTable = (
     <Card.Section>
-            <DataTable
-                columnContentTypes={contentType}
-                headings={heading}
-                rows={row}
-            />
-          </Card.Section>
+      <DataTable
+          columnContentTypes={contentType}
+          headings={heading}
+          rows={row}
+      />
+    </Card.Section>
   )
+
+  const mainTabs = [
+    {
+      id: 'customers',
+      content:  'Home',
+    },
+    {
+      id: 'settings',
+      content: 'Settings',
+    },
+    {
+      id: 'header-rename',
+      content: 'Header Rename',
+    },
+    {
+      id: 'about',
+      content: 'About',
+    },
+  ];
 
   const tabs = [
     {
-      id: 'all-customers-1',
-      content: 'All',
-    },
-    {
-      id: 'accepts-marketing-1',
+      id: 'customers',
       content:  'Customers',
     },
     {
-      id: 'repeat-customers-1',
+      id: 'products',
       content: 'Products',
     },
     {
-      id: 'prospects-1',
+      id: 'orders',
       content: 'Orders',
     },
   ];
+
+  let mainTabsContent = ""
+
+
 
   let table = ""
   
@@ -107,7 +132,7 @@ const Index = ({authAxios}) => {
 
   return(
     <>
-    <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}></Tabs>
+    <Tabs tabs={mainTabs} selected={mainTabSelected} onSelect={handleMainTabChange}></Tabs>
     <Page
     title="Options"
     >
