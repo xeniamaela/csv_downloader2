@@ -1,10 +1,9 @@
 import React ,{useEffect, useState, useCallback} from 'react';
 import { Page, Card, Tabs, Button, DataTable, TextField } from "@shopify/polaris";
-import { CSVLink, CSVDownload } from "react-csv";
+import { CSVLink } from "react-csv";
 
 const Index = ({authAxios}) => {
 
-  const [mainTabSelect, setMainTabSelect] = useState(0)
   const [selected, setSelected] = useState(0);
   const [customers, setCustomers] = useState([]);
   const [filename, setFileName] = useState('');
@@ -23,11 +22,6 @@ const Index = ({authAxios}) => {
 
   const handleTabChange = useCallback(
     (selectedTabIndex) => setSelected(selectedTabIndex),
-    [],
-  );
-
-  const handleMainTabChange = useCallback(
-    (selectedTabIndex) => setMainTabSelect(selectedTabIndex),
     [],
   );
 
@@ -80,22 +74,18 @@ const Index = ({authAxios}) => {
           </Card.Section>
   )
 
-  const mainTabs = [
+  const mainTab = [
     {
       id: 'home',
       content:  'Home',
     },
     {
-      id: 'settings',
-      content: 'Settings',
+      id: 'repeat-customers-1',
+      content: 'Client Setting',
     },
     {
-      id: 'header-rename',
-      content: 'Header Rename',
-    },
-    {
-      id: 'about',
-      content: 'About',
+      id: 'prospects-1',
+      content: 'Orders',
     },
   ]
 
@@ -112,10 +102,6 @@ const Index = ({authAxios}) => {
       id: 'orders',
       content: 'Orders',
     },
-    {
-      id: 'financial-report',
-      content: 'Financial Report',
-    },
   ];
 
   let table = ""
@@ -130,7 +116,7 @@ const Index = ({authAxios}) => {
 
   return(
     <>
-    <Tabs tabs={mainTabs} selected={mainTabSelect} onSelect={handleMainTabChange}></Tabs>
+    <Tabs tabs={tabs} select={select} onSelect={handleTabChange}></Tabs>
     <Page
     title="Options"
     >
@@ -150,11 +136,10 @@ const Index = ({authAxios}) => {
                 headers={heading}
                 data={row}
                 filename={filename}
-                target="_blank"
-              >Download</CSVLink>
+              >Download me</CSVLink>
             </Button>
-            {table}
           </Card.Section>
+          {table}
         </Tabs>
       </Card>
     </Page>
