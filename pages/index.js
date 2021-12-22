@@ -76,6 +76,10 @@ const Index = ({authAxios}) => {
 
   const tabs = [
     {
+      id: 'all-customers-1',
+      content: 'All',
+    },
+    {
       id: 'accepts-marketing-1',
       content:  'Customers',
     },
@@ -97,7 +101,9 @@ const Index = ({authAxios}) => {
 
   } else if (selected === 2) {
      
-  } 
+  } else if (selected === 3) {
+
+  }
 
   return(
     <>
@@ -115,7 +121,6 @@ const Index = ({authAxios}) => {
               placeholder="File name"
               autoComplete="off"
             />
-            <br/>
             <Button>
               <CSVLink
                 headers={heading}
