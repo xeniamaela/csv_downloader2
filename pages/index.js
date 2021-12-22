@@ -95,7 +95,6 @@ const Index = ({authAxios}) => {
           headers={heading}
           data={row}
           filename={filename}
-          target="_blank"
         />Download<CSVLink/>
       </Button>
     </Card.Section>
