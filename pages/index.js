@@ -70,6 +70,30 @@ const Index = ({authAxios}) => {
     ]
   })
 
+  const home = (
+    <Card>
+        <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
+          <Card.Section>
+            <TextField
+              label="Change file name"
+              value={filename}
+              onChange={handleFilename}
+              placeholder="File name"
+              autoComplete="off"
+            />
+            <br/>
+            <Button>
+              <CSVLink
+                headers={heading}
+                data={row}
+                filename={filename}
+              >Download me</CSVLink>
+            </Button>
+          </Card.Section>
+          {table}
+        </Tabs>
+    </Card>
+  )
   const customerTable = (
     <Card.Section>
       <DataTable
@@ -115,8 +139,15 @@ const Index = ({authAxios}) => {
   ];
 
   let mainTabsContent = ""
+  if ( mainTabSelected === 0) {
+    mainTabsContent = home;
+  } else if (mainTabSelected === 1) {
 
+  } else if (mainTabSelected === 2) {
+     
+  } else if (mainTabSelected === 3) {
 
+  }
 
   let table = ""
   
@@ -134,30 +165,9 @@ const Index = ({authAxios}) => {
     <>
     <Tabs tabs={mainTabs} selected={mainTabSelected} onSelect={handleMainTabChange}></Tabs>
     <Page
-    title="Options"
+    title="CSV Downloader"
     >
-      <Card>
-        <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
-          <Card.Section>
-            <TextField
-              label="Change file name"
-              value={filename}
-              onChange={handleFilename}
-              placeholder="File name"
-              autoComplete="off"
-            />
-            <br/>
-            <Button>
-              <CSVLink
-                headers={heading}
-                data={row}
-                filename={filename}
-              >Download me</CSVLink>
-            </Button>
-          </Card.Section>
-          {table}
-        </Tabs>
-      </Card>
+      
     </Page>
     </>
   )
