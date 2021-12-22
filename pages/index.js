@@ -64,29 +64,40 @@ const Index = ({authAxios}) => {
     ]
   })
 
+  const customerTable = (
+    <Card.Section>
+            <DataTable
+                columnContentTypes={contentType}
+                headings={heading}
+                rows={row}
+            />
+          </Card.Section>
+  )
+
   const tabs = [
-    {
-      id: 'all-customers-1',
-      content: 'All',
-      accessibilityLabel: 'All customers',
-      panelID: 'all-customers-content-1',
-    },
     {
       id: 'accepts-marketing-1',
       content:  'Customers',
-      panelID: 'accepts-marketing-content-1',
     },
     {
       id: 'repeat-customers-1',
       content: 'Products',
-      panelID: 'repeat-customers-content-1',
     },
     {
       id: 'prospects-1',
       content: 'Orders',
-      panelID: 'prospects-content-1',
     },
   ];
+
+  let table = ""
+  
+  if ( selected === 0) {
+    table = customerTable;
+  } else if (selected === 1) {
+
+  } else if (selected === 2) {
+     
+  } 
 
   return(
     <>
@@ -112,13 +123,7 @@ const Index = ({authAxios}) => {
               >Download me</CSVLink>
             </Button>
           </Card.Section>
-          <Card.Section>
-            <DataTable
-                columnContentTypes={contentType}
-                headings={heading}
-                rows={row}
-            />
-          </Card.Section>
+          {table}
         </Tabs>
       </Card>
     </Page>
