@@ -71,7 +71,10 @@ const Index = ({authAxios}) => {
   })
 
   const home = (
-    <Card>
+    <Page
+    title="CSV Downloader"
+    >
+      <Card>
         <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
           <Card.Section>
             <TextField
@@ -93,7 +96,9 @@ const Index = ({authAxios}) => {
           {table}
         </Tabs>
     </Card>
+  </Page>
   )
+
   const customerTable = (
     <Card.Section>
       <DataTable
@@ -164,11 +169,7 @@ const Index = ({authAxios}) => {
   return(
     <>
     <Tabs tabs={mainTabs} selected={mainTabSelected} onSelect={handleMainTabChange}></Tabs>
-    <Page
-    title="CSV Downloader"
-    >
-      
-    </Page>
+      {mainTabsContent}
     </>
   )
 };
