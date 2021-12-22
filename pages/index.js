@@ -81,27 +81,24 @@ const Index = ({authAxios}) => {
   )
 
   const home = (
-    <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
-      <Card.Section>
-        <TextField
-          label="Change file name"
-          value={filename}
-          onChange={handleFilename}
-          placeholder="File name"
-          autoComplete="off"
+    <Card.Section>
+      <TextField
+        label="Change file name"
+        value={filename}
+        onChange={handleFilename}
+        placeholder="File name"
+        autoComplete="off"
+      />
+      <br/>
+      <Button primary>
+        <CSVDownload
+          headers={heading}
+          data={row}
+          filename={filename}
+          target="_blank"
         />
-        <br/>
-        <Button primary>
-          <CSVDownload
-            headers={heading}
-            data={row}
-            filename={filename}
-            target="_blank"
-          />
-        </Button>
-      </Card.Section>
-      {table}
-    </Tabs>
+      </Button>
+    </Card.Section>
   )
 
   const mainTabs = [
@@ -169,7 +166,10 @@ const Index = ({authAxios}) => {
     title="Options"
     >
       <Card>
-        {mainContents}
+        <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
+          {mainContents}
+        </Tabs>
+        {table}
       </Card>
     </Page>
     </>
