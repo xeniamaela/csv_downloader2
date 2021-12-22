@@ -74,32 +74,17 @@ const Index = ({authAxios}) => {
           </Card.Section>
   )
 
-  const mainTab = [
-    {
-      id: 'home',
-      content:  'Home',
-    },
-    {
-      id: 'repeat-customers-1',
-      content: 'Client Setting',
-    },
-    {
-      id: 'prospects-1',
-      content: 'Orders',
-    },
-  ]
-
   const tabs = [
     {
-      id: 'customers',
+      id: 'accepts-marketing-1',
       content:  'Customers',
     },
     {
-      id: 'products',
+      id: 'repeat-customers-1',
       content: 'Products',
     },
     {
-      id: 'orders',
+      id: 'prospects-1',
       content: 'Orders',
     },
   ];
@@ -116,7 +101,7 @@ const Index = ({authAxios}) => {
 
   return(
     <>
-    <Tabs tabs={tabs} select={select} onSelect={handleTabChange}></Tabs>
+    <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}></Tabs>
     <Page
     title="Options"
     >
