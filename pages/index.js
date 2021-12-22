@@ -90,13 +90,13 @@ const Index = ({authAxios}) => {
         autoComplete="off"
       />
       <br/>
-      <Button primary>
-        <CSVDownload
+      <Button>
+        <CSVLink
           headers={heading}
           data={row}
           filename={filename}
           target="_blank"
-        />
+        />Download<CSVLink/>
       </Button>
     </Card.Section>
   )
