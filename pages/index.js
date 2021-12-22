@@ -4,6 +4,7 @@ import { CSVLink } from "react-csv";
 
 const Index = ({authAxios}) => {
 
+  const [mainTabSelect, setMainTabSelect] = useState(0)
   const [selected, setSelected] = useState(0);
   const [customers, setCustomers] = useState([]);
   const [filename, setFileName] = useState('');
@@ -22,6 +23,11 @@ const Index = ({authAxios}) => {
 
   const handleTabChange = useCallback(
     (selectedTabIndex) => setSelected(selectedTabIndex),
+    [],
+  );
+
+  const handleMainTabChange = useCallback(
+    (selectedTabIndex) => setMainTabSelect(selectedTabIndex),
     [],
   );
 
@@ -74,18 +80,41 @@ const Index = ({authAxios}) => {
           </Card.Section>
   )
 
-  const tabs = [
+  const mainTabs = [
     {
-      id: 'accepts-marketing-1',
-      content:  'Customers',
+      id: 'home',
+      content:  'Home',
     },
     {
-      id: 'repeat-customers-1',
-      content: 'Products',
+      id: 'settings',
+      content: 'Settings',
     },
     {
       id: 'prospects-1',
+      content: 'Header Rename',
+    },
+    {
+      id: 'prospects-1',
+      content: 'About',
+    },
+  ]
+
+  const tabs = [
+    {
+      id: 'customers',
+      content:  'Customers',
+    },
+    {
+      id: 'products',
+      content: 'Products',
+    },
+    {
+      id: 'orders',
       content: 'Orders',
+    },
+    {
+      id: 'financial-report',
+      content: 'Financial Report',
     },
   ];
 
@@ -101,7 +130,7 @@ const Index = ({authAxios}) => {
 
   return(
     <>
-    <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}></Tabs>
+    <Tabs tabs={mainTabs} selected={mainTabSelect} onSelect={handleMainTabChange}></Tabs>
     <Page
     title="Options"
     >
@@ -115,7 +144,8 @@ const Index = ({authAxios}) => {
               placeholder="File name"
               autoComplete="off"
             />
-            <Button>
+            <br/>
+            <Button primary>
               <CSVLink
                 headers={heading}
                 data={row}
