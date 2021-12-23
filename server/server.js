@@ -6,6 +6,7 @@ import Shopify, { ApiVersion } from "@shopify/shopify-api";
 import Koa from "koa";
 import next from "next";
 import Router from "koa-router";
+import koaBody from "koa-body";
 
 dotenv.config();
 const port = parseInt(process.env.PORT, 10) || 8081;
@@ -69,38 +70,153 @@ app.prepare().then(async () => {
     ctx.res.statusCode = 200;
   };
 
-  router.get("/customers", verifyRequest({returnHeader: true}), async(ctx) => {
-    let customers = [];
+  var mysql = require("mysql");
+
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "csv_downloader_db",
+  });
+
+  con.connect(function (err) {
+    if (err) throw err;
+    console.log("Connected!");
+  });
+
+  router.post("/export-history", verifyRequest(), koaBody(), async (ctx) => {
     const session = await Shopify.Utils.loadCurrentSession(ctx.req, ctx.res);
-    const client = new Shopify.Clients.Rest(session.shop, session.accessToken);
-    const data = await client.get({
-      path: 'customers',
-      query: {limit:5} 
-    });
+    const client = new Shopify.Clients.Graphql(
+      session.shop,
+      session.accessToken
+    );
+    async function getData() {
+      return new Promise(async (resolve, reject) => {
+        let storeId = await client.query({
+          data: `{
+              shop{
+                id
+              }
+            }`,
+        });
+        let sId = storeId.body.data.shop.id.split("/");
+        sId = parseInt(sId[sId.length - 1]);
+        let resData = ctx.request.body;
+        con.query(
+          `INSERT INTO history (shop_id, export_name) VALUES (${sId}, '${resData.export_name}')`,
+          (err, res) => {
+            if (!err) {
+              resolve({ status: 200 });
+            } else {
+              reject({ status: 500 });
+            }
+          }
+        );
+      });
+    }
+    ctx.body = await getData();
+  });
 
-    let newPageInfo;
-    customers = [...data.body.customers]
-    
-    newPageInfo = data.pageInfo.nextPage.query.page_info;
-    console.log(newPageInfo);
-      
-    while(newPageInfo) {
+  // router.get("/get-history", verifyRequest(), async (ctx) => {
+  //   const session = await Shopify.Utils.loadCurrentSession(ctx.req, ctx.res);
+  //   const client = new Shopify.Clients.Rest(session.shop, session.accessToken);
+  //   async function getData() {
+  //     return new Promise(async (resolve, reject) => {
+  //       const data = await client.get({
+  //         path: "shop",
+  //       });
+  //       const sId = data.body.shop.id;
+  //       con.query(
+  //         `SELECT export_name, export_date FROM history WHERE shop_id = ${sId}`,
+  //         (err, result) => {
+  //           if (!err) {
+  //             resolve({ status: 200, body: result });
+  //           } else {
+  //             reject({ status: 500 });
+  //           }
+  //         }
+  //       );
+  //     });
+  //   }
+  //   ctx.body = await getData();
+  // });
 
+  router.get("/get-history", verifyRequest(), async (ctx) => {
+    const session = await Shopify.Utils.loadCurrentSession(ctx.req, ctx.res);
+    const client = new Shopify.Clients.Graphql(
+      session.shop,
+      session.accessToken
+    );
+    async function getData() {
+      return new Promise(async (resolve, reject) => {
+        let storeId = await client.query({
+          data: `{
+              shop{
+                id
+              }
+            }`,
+        });
+        let sId = storeId.body.data.shop.id.split("/");
+        sId = parseInt(sId[sId.length - 1]);
+        console.log(sId);
+        con.query(
+          `SELECT export_name, export_date FROM history WHERE shop_id = 2147483647`,
+          (err, result) => {
+            if (!err) {
+              resolve({ status: 200, body: result });
+            } else {
+              reject({ status: 500 });
+            }
+          }
+        );
+      });
+    }
+    ctx.body = await getData();
+  });
+
+  router.get(
+    "/customers",
+    verifyRequest({ returnHeader: true }),
+    async (ctx) => {
+      let customers = [];
+
+      const session = await Shopify.Utils.loadCurrentSession(ctx.req, ctx.res);
+      const client = new Shopify.Clients.Rest(
+        session.shop,
+        session.accessToken
+      );
+      const data = await client.get({
+        path: "customers",
+        query: { limit: 250 },
+      });
+
+      customers = [...data.body.customers];
+      let newPageInfo;
+
+      newPageInfo =
+        data.pageInfo.nextPage !== undefined &&
+        data.pageInfo.nextPage.query.page_info;
+      console.log(newPageInfo);
+
+      while (newPageInfo) {
         const nextPage = await client.get({
-          path: 'customers',
-          query: {page_info: newPageInfo, limit:5}
-        })
-        customers = [...customers, ...nextPage.body.customers]
+          path: "customers",
+          query: { page_info: newPageInfo, limit: 5 },
+        });
+        customers = [...customers, ...nextPage.body.customers];
         // console.log(nextPage.pageInfo.nextPage.query.page_info)
 
-        newPageInfo = nextPage.pageInfo.nextPage !== undefined && nextPage.pageInfo.nextPage.query.page_info
-    }
+        newPageInfo =
+          nextPage.pageInfo.nextPage !== undefined &&
+          nextPage.pageInfo.nextPage.query.page_info;
+      }
 
-    // console.log(customers)
-    ctx.status = 200;
-    ctx.body = customers;
-  })
-  
+      // console.log(customers)
+      ctx.status = 200;
+      ctx.body = customers;
+    }
+  );
+
   router.post("/webhooks", async (ctx) => {
     try {
       await Shopify.Webhooks.Registry.process(ctx.req, ctx.res);
