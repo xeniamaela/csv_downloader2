@@ -1,4 +1,4 @@
-import { Card, DataTable } from "@shopify/polaris";
+import { Page, Card, DataTable } from "@shopify/polaris";
 import React, { useEffect, useState, useCallback } from "react";
 
 const History = ({ authAxios }) => {
@@ -8,27 +8,29 @@ const History = ({ authAxios }) => {
   useEffect(() => {
     console.log("am clicked");
     authAxios.get("/get-history").then((result) => {
-      console.log(result);
-      setExportData(result);
+      console.log(result.data.body);
+      setExportData(result.data.body);
     });
   }, [authAxios]);
 
   const contentType = ["text", "text"];
-  const heading = ["export_name", "export_date"];
+  const heading = ["Export Name", "Export Date"];
 
-  //   const exports = [];
-  //   exportData.map((data) => exports.push([data.export_name, data.export_date]));
+  const exports = [];
+  exportData.map((data) => exports.push([data.export_name, data.export_date]));
 
   return (
-    <Card title="Export history">
-      <Card.Section>
-        {/* <DataTable
-          columnContentTypes={contentType}
-          headings={heading}
-          rows={exports}
-        /> */}
-      </Card.Section>
-    </Card>
+    <Page title="Export History">
+      <Card>
+        <Card.Section>
+          <DataTable
+            columnContentTypes={contentType}
+            headings={heading}
+            rows={exports}
+          />
+        </Card.Section>
+      </Card>
+    </Page>
   );
 };
 

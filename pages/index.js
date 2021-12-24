@@ -8,7 +8,7 @@ import {
   TextField,
 } from "@shopify/polaris";
 
-import Customers from "./customers";
+import Home from "./home";
 import History from "./history";
 
 const Index = ({ authAxios }) => {
@@ -40,7 +40,7 @@ const Index = ({ authAxios }) => {
 
   let mainTabsContent = "";
   if (mainTabSelected === 0) {
-    mainTabsContent = <Customers authAxios={authAxios} />;
+    mainTabsContent = <Home authAxios={authAxios} />;
   } else if (mainTabSelected === 1) {
   } else if (mainTabSelected === 2) {
   } else if (mainTabSelected === 3) {
@@ -54,8 +54,7 @@ const Index = ({ authAxios }) => {
         selected={mainTabSelected}
         onSelect={handleMainTabChange}
       ></Tabs>
-
-      <Page title="CSV Downloader">{mainTabsContent}</Page>
+      {mainTabsContent}
     </>
   );
 };

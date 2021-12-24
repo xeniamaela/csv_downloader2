@@ -86,24 +86,17 @@ app.prepare().then(async () => {
 
   router.post("/export-history", verifyRequest(), koaBody(), async (ctx) => {
     const session = await Shopify.Utils.loadCurrentSession(ctx.req, ctx.res);
-    const client = new Shopify.Clients.Graphql(
-      session.shop,
-      session.accessToken
-    );
+    const client = new Shopify.Clients.Rest(session.shop, session.accessToken);
     async function getData() {
       return new Promise(async (resolve, reject) => {
-        let storeId = await client.query({
-          data: `{
-              shop{
-                id
-              }
-            }`,
+        const data = await client.get({
+          path: "shop",
         });
-        let sId = storeId.body.data.shop.id.split("/");
-        sId = parseInt(sId[sId.length - 1]);
+        const sId = data.body.shop.id;
+        console.log("post", sId);
         let resData = ctx.request.body;
         con.query(
-          `INSERT INTO history (shop_id, export_name) VALUES (${sId}, '${resData.export_name}')`,
+          `INSERT INTO history (shop_id, export_name) VALUES ('${sId}', '${resData.export_name}')`,
           (err, res) => {
             if (!err) {
               resolve({ status: 200 });
@@ -117,50 +110,17 @@ app.prepare().then(async () => {
     ctx.body = await getData();
   });
 
-  // router.get("/get-history", verifyRequest(), async (ctx) => {
-  //   const session = await Shopify.Utils.loadCurrentSession(ctx.req, ctx.res);
-  //   const client = new Shopify.Clients.Rest(session.shop, session.accessToken);
-  //   async function getData() {
-  //     return new Promise(async (resolve, reject) => {
-  //       const data = await client.get({
-  //         path: "shop",
-  //       });
-  //       const sId = data.body.shop.id;
-  //       con.query(
-  //         `SELECT export_name, export_date FROM history WHERE shop_id = ${sId}`,
-  //         (err, result) => {
-  //           if (!err) {
-  //             resolve({ status: 200, body: result });
-  //           } else {
-  //             reject({ status: 500 });
-  //           }
-  //         }
-  //       );
-  //     });
-  //   }
-  //   ctx.body = await getData();
-  // });
-
   router.get("/get-history", verifyRequest(), async (ctx) => {
     const session = await Shopify.Utils.loadCurrentSession(ctx.req, ctx.res);
-    const client = new Shopify.Clients.Graphql(
-      session.shop,
-      session.accessToken
-    );
+    const client = new Shopify.Clients.Rest(session.shop, session.accessToken);
     async function getData() {
       return new Promise(async (resolve, reject) => {
-        let storeId = await client.query({
-          data: `{
-              shop{
-                id
-              }
-            }`,
+        const data = await client.get({
+          path: "shop",
         });
-        let sId = storeId.body.data.shop.id.split("/");
-        sId = parseInt(sId[sId.length - 1]);
-        console.log(sId);
+        const sId = data.body.shop.id;
         con.query(
-          `SELECT export_name, export_date FROM history WHERE shop_id = 2147483647`,
+          `SELECT export_name, export_date FROM history WHERE shop_id = ${sId}`,
           (err, result) => {
             if (!err) {
               resolve({ status: 200, body: result });

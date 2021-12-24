@@ -12,8 +12,7 @@ import { CSVLink } from "react-csv";
 const Customers = ({ authAxios }) => {
   //states
   const [customers, setCustomers] = useState([]);
-  const [filename, setFileName] = useState(null);
-  const [selected, setSelected] = useState(0);
+  const [filename, setFileName] = useState("customers");
 
   useEffect(() => {
     authAxios
@@ -28,17 +27,16 @@ const Customers = ({ authAxios }) => {
   }, [authAxios]);
 
   //handlers
-  const handleFilename = useCallback((fileName) => setFileName(fileName), []);
-  const handleTabChange = useCallback(
-    (selectedTabIndex) => setSelected(selectedTabIndex),
-    []
-  );
+  const handleFilename = useCallback((fileName) => {
+    setFileName(fileName);
+  }, []);
 
   const handleDb = () => {
     authAxios
       .post("/export-history", { export_name: filename })
       .then((result) => {
         console.log(result);
+        return result;
       });
   };
 
@@ -125,23 +123,28 @@ const Customers = ({ authAxios }) => {
     ]);
   });
 
-  const tabs = [
-    {
-      id: "customers",
-      content: "Customers",
-    },
-    {
-      id: "products",
-      content: "Products",
-    },
-    {
-      id: "orders",
-      content: "Orders",
-    },
-  ];
-
-  const customerTable = (
+  return (
     <Card>
+      <Card.Section>
+        <TextField
+          label="Change file name"
+          value={filename}
+          onChange={handleFilename}
+          placeholder="File name"
+          autoComplete="off"
+        />
+        <br />
+        <Button>
+          <CSVLink
+            headers={heading}
+            data={row}
+            filename={filename}
+            onClick={handleDb}
+          >
+            Download
+          </CSVLink>
+        </Button>
+      </Card.Section>
       <Card.Section>
         <DataTable
           columnContentTypes={contentType}
@@ -149,43 +152,6 @@ const Customers = ({ authAxios }) => {
           rows={row}
         />
       </Card.Section>
-    </Card>
-  );
-
-  let table = "";
-
-  if (selected === 0) {
-    table = customerTable;
-  } else if (selected === 1) {
-  } else if (selected === 2) {
-  } else if (selected === 3) {
-  }
-
-  return (
-    <Card>
-      <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
-        <Card.Section>
-          <TextField
-            label="Change file name"
-            value={filename}
-            onChange={handleFilename}
-            placeholder="File name"
-            autoComplete="off"
-          />
-          <br />
-          <Button>
-            <CSVLink
-              headers={heading}
-              data={row}
-              filename={filename}
-              onClick={handleDb}
-            >
-              Download
-            </CSVLink>
-          </Button>
-        </Card.Section>
-        {table}
-      </Tabs>
     </Card>
   );
 };
