@@ -10,6 +10,7 @@ import {
 
 import Home from "./home";
 import History from "./history";
+import HeaderRename from "./header_rename";
 
 const Index = ({ authAxios }) => {
   const [mainTabSelected, setMainTabSelected] = useState(0);
@@ -22,19 +23,19 @@ const Index = ({ authAxios }) => {
   const mainTabs = [
     {
       id: "home",
-      content: "Home",
+      content: "ホーム",
     },
     {
-      id: "settings",
-      content: "Settings",
+      id: "set-by-the-owner",
+      content: "依賴主設定(佐票)",
     },
     {
       id: "header-rename",
-      content: "Header Rename",
+      content: "ヘッダー名変更",
     },
     {
-      id: "history",
-      content: "History",
+      id: "plan-information",
+      content: "プラン情報",
     },
   ];
 
@@ -43,6 +44,7 @@ const Index = ({ authAxios }) => {
     mainTabsContent = <Home authAxios={authAxios} />;
   } else if (mainTabSelected === 1) {
   } else if (mainTabSelected === 2) {
+    mainTabsContent = <HeaderRename authAxios={authAxios} />;
   } else if (mainTabSelected === 3) {
     mainTabsContent = <History authAxios={authAxios} />;
   }
@@ -55,6 +57,17 @@ const Index = ({ authAxios }) => {
         onSelect={handleMainTabChange}
       ></Tabs>
       {mainTabsContent}
+      <Page>
+        <br />
+        <hr />
+        <br />
+        <div>
+          <p>アプリに関するご質問・ご要望は下記までご連絡ください。</p>
+          <p>サポートセンター:app-support@gf-e.co.jp</p>
+        </div>
+        <br />
+        <br />
+      </Page>
     </>
   );
 };

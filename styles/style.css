@@ -1,0 +1,48 @@
+.draggable-container {
+  background-color: pink;
+}
+
+.draggable-items {
+  background-color: #f2f2f2;
+  margin: 5px;
+  padding: 5px;
+  text-align: center;
+}
+
+.draggable-list {
+  margin: 10px;
+  list-style: none;
+}
+
+.btnContainer {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.btnGreen {
+  background-color: #5cbec1;
+  border: none;
+  width: 25%;
+  padding: 10px 32px;
+  margin: 5px;
+  color: white;
+}
+
+.btnBlue {
+  background-color: #5866bc;
+  border: none;
+  width: 25%;
+  padding: 10px 32px;
+  margin: 5px;
+  color: white;
+  text-decoration: none;
+}
+
+.main-tabs {
+  border: 0.2px;
+}
+
+.margin-top-30 {
+  margin-top: 30px;
+}
+/*# sourceMappingURL=style.css.map */
