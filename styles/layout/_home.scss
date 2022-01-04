@@ -16,15 +16,9 @@
 
 .btnContainer {
   margin-top: 25px;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-flex: row;
-      -ms-flex: row;
-          flex: row;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  flex: row;
+  justify-content: center;
 }
 
 .btnGreen {
@@ -64,16 +58,12 @@
   color: white;
   text-decoration: none;
 }
-
 .header-name {
   width: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  justify-content: flex-start;
   margin: auto;
+  // background-color: #f2f2f2;
 }
 
 .header-textfield {
@@ -81,10 +71,9 @@
 }
 
 .header-container {
-  display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 300px 30px 20px auto;
-      grid-template-columns: 300px 30px 20px auto;
+  grid-template-columns: 300px 30px 20px auto;
+  // background-color: #f2f2f2;
   margin: 0px 10px;
 }
 
@@ -95,7 +84,6 @@
 .margin-auto {
   margin: auto;
 }
-
 .margin-top-30 {
   margin-top: 30px;
 }
@@ -109,4 +97,3 @@
   width: 100%;
   text-align: center;
 }
-/*# sourceMappingURL=style.css.map */

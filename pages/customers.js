@@ -1,7 +1,16 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Card, Page, Stack, TextField, RadioButton } from "@shopify/polaris";
+import {
+  Card,
+  Icon,
+  Page,
+  Stack,
+  TextField,
+  RadioButton,
+  Modal,
+} from "@shopify/polaris";
 import { CSVLink } from "react-csv";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragHandleMinor, ChevronRightMinor } from "@shopify/polaris-icons";
 
 const Customers = ({ authAxios }) => {
   const [whenReady, setWhenReady] = useState(false);
@@ -9,12 +18,43 @@ const Customers = ({ authAxios }) => {
     setWhenReady(true);
   }, []);
 
+  const headings = [
+    { label: "accepts_marketing", key: "accepts_marketing" },
+    {
+      label: "accepts_marketing_updated_at",
+      key: "accepts_marketing_updated_at",
+    },
+    { label: "addresses", key: "addresses" },
+    { label: "admin_graphql_api_id", key: "admin_graphql_api_id" },
+    { label: "created_at", key: "created_at" },
+    { label: "currency", key: "currency" },
+    { label: "email", key: "email" },
+    { label: "first_name", key: "first_name" },
+    { label: "id", key: "id" },
+    { label: "last_name", key: "last_name" },
+    { label: "last_order_id", key: "last_order_id" },
+    { label: "last_order_name", key: "last_order_name" },
+    { label: "marketing_opt_in_level", key: "marketing_opt_in_level" },
+    { label: "multipass_identifier", key: "multipass_identifier" },
+    { label: "note", key: "note" },
+    { label: "orders_count", key: "orders_count" },
+    { label: "phone", key: "phone" },
+    { label: "state", key: "state" },
+    { label: "tags", key: "tags" },
+    { label: "tax_exempt", key: "tax_exempt" },
+    { label: "tax_exemptions", key: "tax_exemptions" },
+    { label: "total_spent", key: "total_spent" },
+    { label: "updated_at", key: "updated_at" },
+    { label: "verified_email", key: "verified_email" },
+  ];
+
   const heading = [
     "accepts_marketing",
     "accepts_marketing_updated_at",
     "addresses",
     "admin_graphql_api_id",
     "created_at",
+    "currency",
     "email",
     "first_name",
     "id",
@@ -35,32 +75,6 @@ const Customers = ({ authAxios }) => {
     "verified_email",
   ];
 
-  const headings = [
-    { id: "item-1", content: "accepts_marketing" },
-    { id: "item-2", content: "accepts_marketing_updated_at" },
-    { id: "item-3", content: "addresses" },
-    { id: "item-4", content: "admin_graphql_api_id" },
-    { id: "item-5", content: "created_at" },
-    { id: "item-6", content: "email" },
-    { id: "item-7", content: "first_name" },
-    { id: "item-8", content: "id" },
-    { id: "item-9", content: "last_name" },
-    { id: "item-10", content: "last_order_id" },
-    { id: "item-11", content: "last_order_name" },
-    { id: "item-12", content: "marketing_opt_in_level" },
-    { id: "item-13", content: "multipass_identifier" },
-    { id: "item-14", content: "note" },
-    { id: "item-15", content: "orders_count" },
-    { id: "item-16", content: "phone" },
-    { id: "item-17", content: "state" },
-    { id: "item-18", content: "tags" },
-    { id: "item-19", content: "tax_exempt" },
-    { id: "item-20", content: "tax_exemptions" },
-    { id: "item-21", content: "total_spent" },
-    { id: "item-22", content: "updated_at" },
-    { id: "item-23", content: "verified_email" },
-  ];
-
   //states
   const [customers, setCustomers] = useState([]);
   const [filename, setFileName] = useState("");
@@ -69,7 +83,7 @@ const Customers = ({ authAxios }) => {
     authAxios
       .get("/customers")
       .then((result) => {
-        console.log(result.data);
+        // console.log(result.data);
         setCustomers(result.data);
       })
       .catch((error) => {
@@ -77,69 +91,43 @@ const Customers = ({ authAxios }) => {
       });
   }, [authAxios]);
 
-  const contentType = [
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-    "text",
-  ];
-
-  const row = [];
-  customers.map((customer) => {
-    row.push([
-      customer.accepts_marketing.toString(),
-      customer.accepts_marketing_updated_at,
-      customer.addresses.join(),
-      customer.admin_graphql_api_id,
-      customer.created_at,
-      customer.currency,
-      customer.email,
-      customer.first_name,
-      customer.id,
-      customer.last_name,
-      customer.last_order_id,
-      customer.last_order_name,
-      customer.marketing_opt_in_level,
-      customer.multipass_identifier,
-      customer.note,
-      customer.orders_count,
-      customer.phone,
-      customer.state,
-      customer.tags,
-      customer.tax_exempt,
-      customer.tax_exemptions.join(),
-      customer.total_spent,
-      customer.updated_at,
-      customer.verified_email.toString(),
-    ]);
+  const row = customers.map((customer) => {
+    return {
+      accepts_marketing: customer.accepts_marketing.toString(),
+      accepts_marketing_updated_at: customer.accepts_marketing_updated_at,
+      addresses: customer.addresses.map((result) => {
+        let address = `${result.address1} , ${result.city} , ${result.country} , ${result.zip}`;
+        return address;
+      }),
+      admin_graphql_api_id: customer.admin_graphql_api_id,
+      created_at: customer.created_at,
+      currency: customer.currency,
+      email: customer.email,
+      first_name: customer.first_name,
+      id: customer.id,
+      last_name: customer.last_name,
+      last_order_id: customer.last_order_id,
+      last_order_name: customer.last_order_name,
+      marketing_opt_in_level: customer.marketing_opt_in_level,
+      multipass_identifier: customer.multipass_identifier,
+      note: customer.note,
+      orders_count: customer.orders_count,
+      phone: customer.phone,
+      state: customer.state,
+      tags: customer.tags,
+      tax_exempt: customer.tax_exempt,
+      tax_exemptions: customer.tax_exemptions,
+      total_spent: customer.total_spent,
+      updated_at: customer.updated_at,
+      verified_email: customer.verified_email,
+    };
   });
 
-  //handlers
-
+  // console.log(trial);
   const handleDb = () => {
     authAxios
       .post("/export-history", { export_name: filename })
       .then((result) => {
-        console.log(result);
         return result;
       });
   };
@@ -160,6 +148,36 @@ const Customers = ({ authAxios }) => {
     setHeaderOrder(items);
   };
 
+  let sortedRow = [];
+  headerOrder.map((head) => sortedRow.push(head.key));
+
+  const valuesOrder = row.map((member) => {
+    return JSON.parse(JSON.stringify(member, sortedRow));
+  });
+
+  console.log(valuesOrder);
+
+  const handleRename = (head, updatedValue) => {
+    const elements = headerOrder.map((newArrangement) => {
+      if (newArrangement.key === head.key) {
+        return { ...newArrangement, label: updatedValue };
+      }
+      return newArrangement;
+    });
+
+    console.log(elements);
+    setHeaderOrder(elements);
+  };
+
+  const [active, setActive] = useState(false);
+
+  const handleChange = useCallback(() => setActive(!active), [active]);
+  const btnAddEmptyColumn = (
+    <button className="btnGreen" onClick={handleChange}>
+      空カラムを追加
+    </button>
+  );
+
   const dragAndDrop = whenReady ? (
     <div className="dndContainer">
       <DragDropContext onDragEnd={handleOnDragEnd}>
@@ -170,11 +188,11 @@ const Customers = ({ authAxios }) => {
               ref={provided.innerRef}
               className="draggable-list"
             >
-              {headerOrder.map(({ id, content }, index) => {
+              {headerOrder.map((head, index) => {
                 return (
                   <Draggable
-                    key={id}
-                    draggableId={id}
+                    key={head.key}
+                    draggableId={head.key}
                     index={index}
                     ref={provided.innerRef}
                   >
@@ -185,7 +203,30 @@ const Customers = ({ authAxios }) => {
                         ref={provided.innerRef}
                         className="draggable-items"
                       >
-                        <p>{content}</p>
+                        <div className="header-container">
+                          <div className="header-name">
+                            <Stack>
+                              <Icon source={DragHandleMinor} color="base" />
+                              <label>{head.key}</label>
+                            </Stack>
+                          </div>
+                          <div className="margin-auto">
+                            <Stack>
+                              <Icon source={ChevronRightMinor} color="base" />
+                            </Stack>
+                          </div>
+                          <div></div>
+                          <div>
+                            <TextField
+                              value={head.label}
+                              onChange={(e) => {
+                                handleRename(head, e.target.value);
+                              }}
+                              autoComplete="off"
+                              placeholder={head.label}
+                            />
+                          </div>
+                        </div>
                       </li>
                     )}
                   </Draggable>
@@ -203,20 +244,55 @@ const Customers = ({ authAxios }) => {
     filename !== "" ? (
       <button className="btnBlue">
         <CSVLink
-          headers={heading}
-          data={row}
+          headers={headerOrder}
+          data={valuesOrder}
           filename={filename}
           onClick={handleDb}
-          className="btnBlue"
+          className="linkBlue"
         >
           エクスポート
         </CSVLink>
       </button>
     ) : (
-      <button className="btnBlue" disabled>
-        エクスポート
-      </button>
+      <button className="btnDisabled">エクスポート</button>
     );
+
+  const radioButtonsAddColumn = (
+    <div>
+      <RadioButton
+        label="商品に関する項目" //items related to products
+        // checked={value === "disabled"}
+        id="printHeaderLine"
+        name="accounts"
+        // onChange={handleChange}
+      />
+      <br />
+      <RadioButton
+        label="注文に関する項目" //items related to orders
+        // checked={value === "disabled"}
+        id="doNotPrintHeaderLine"
+        name="accounts"
+        // onChange={handleChange}
+      />
+      <br />
+      <RadioButton
+        label="会員に関する項目" //items related to members
+        // checked={value === "disabled"}
+        id="doNotPrintHeaderLine"
+        name="accounts"
+        // onChange={handleChange}
+      />
+      <br />
+      <br />
+      <p>
+        各データの項目につきましては
+        <span>
+          <a href="">こちら</a>
+        </span>
+        を参照してください。
+      </p>
+    </div>
+  );
 
   return (
     <>
@@ -226,9 +302,26 @@ const Customers = ({ authAxios }) => {
           <Card.Section>
             {dragAndDrop}
             <div className="btnContainer">
-              <button class="btnGreen">空カラムを追加</button>
+              <Modal
+                activator={btnAddEmptyColumn}
+                open={active}
+                onClose={handleChange}
+                title="カラム追加" /* add column */
+                primaryAction={{
+                  content: "Close",
+                  onAction: handleChange,
+                }}
+                secondaryActions={[
+                  {
+                    content: "戻る", //cancel
+                    onAction: handleChange,
+                  },
+                ]}
+              >
+                <Modal.Section>{radioButtonsAddColumn}</Modal.Section>
+              </Modal>
               {/*add empty column */}
-              <button class="btnBlue">新しいカラムを追加</button>
+              <button className="btnBlue">新しいカラムを追加</button>
               {/*add new column */}
             </div>
           </Card.Section>

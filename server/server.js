@@ -4,9 +4,10 @@ import "isomorphic-fetch";
 import createShopifyAuth, { verifyRequest } from "@shopify/koa-shopify-auth";
 import Shopify, { ApiVersion } from "@shopify/shopify-api";
 import Koa from "koa";
+import koaBody from "koa-body";
 import next from "next";
 import Router from "koa-router";
-import koaBody from "koa-body";
+import * as handlers from "./handlers/index";
 
 dotenv.config();
 const port = parseInt(process.env.PORT, 10) || 8081;
@@ -176,6 +177,36 @@ app.prepare().then(async () => {
       ctx.body = customers;
     }
   );
+
+  router.post(
+    "/subscription-basic",
+    verifyRequest(),
+    koaBody(),
+    async (ctx) => {
+      const session = await Shopify.Utils.loadCurrentSession(ctx.req, ctx.res);
+      server.context.client = await handlers.createClient(
+        session.shop,
+        session.accessToken
+      );
+      const res = JSON.stringify(
+        await handlers.getSubscriptionUrl(ctx, session.shop)
+      );
+
+      ctx.status = 200;
+      ctx.body = res;
+    }
+  );
+
+  router.get("/all-subscription", verifyRequest(), async (ctx) => {
+    const session = await Shopify.Utils.loadCurrentSession(ctx.req, ctx.res);
+    const client = new Shopify.Clients.Rest(session.shop, session.accessToken);
+    const data = await client.get({
+      path: "recurring_application_charges",
+    });
+
+    ctx.status = 200;
+    ctx.body = data;
+  });
 
   router.post("/webhooks", async (ctx) => {
     try {

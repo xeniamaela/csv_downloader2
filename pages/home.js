@@ -1,20 +1,16 @@
 import React, { useEffect, useState, useCallback } from "react";
-import {
-  Page,
-  Card,
-  Tabs,
-  Layout,
-  RadioButton,
-  Button,
-  DataTable,
-  TextField,
-  Stack,
-} from "@shopify/polaris";
+import { Page, Card, Tabs, Layout, RadioButton } from "@shopify/polaris";
 
 import Customers from "./customers";
 
 const Home = ({ authAxios }) => {
   const [selected, setSelected] = useState(0);
+  const [value, setValue] = useState("disabled");
+
+  const handleRadioButton = useCallback(
+    (_checked, newValue) => setValue(newValue),
+    []
+  );
 
   const handleTabChange = useCallback(
     (selectedTabIndex) => setSelected(selectedTabIndex),
@@ -58,46 +54,46 @@ const Home = ({ authAxios }) => {
             <div>
               <RadioButton
                 label="佐川急便 - e飛伝II"
-                // checked={value === "disabled"}
+                checked={value === "disabled"}
                 id="disabled"
-                name="accounts"
-                // onChange={handleChange}
+                // name="accounts"
+                onChange={handleRadioButton}
               />
             </div>
             <div>
               <RadioButton
                 label="佐川急便 - e飛伝III"
-                // checked={value === "disabled"}
+                checked={value === "disabled"}
                 id="disabled"
-                name="accounts"
-                // onChange={handleChange}
+                // name="accounts"
+                onChange={handleRadioButton}
               />
             </div>
             <div>
               <RadioButton
                 label="ヤマト B2 運輸 - クラウド"
-                // checked={value === "disabled"}
+                checked={value === "disabled"}
                 id="disabled"
-                name="accounts"
-                // onChange={handleChange}
+                // name="accounts"
+                onChange={handleRadioButton}
               />
             </div>
             <div>
               <RadioButton
                 label="日本郵政 - ゆうパックプリントR"
-                // checked={value === "disabled"}
+                checked={value === "disabled"}
                 id="disabled"
-                name="accounts"
-                // onChange={handleChange}
+                // name="accounts"
+                onChange={handleRadioButton}
               />
             </div>
             <div>
               <RadioButton
                 label="フォーマット未選択"
-                // checked={value === "disabled"}
+                checked={value === "disabled"}
                 id="disabled"
-                name="accounts"
-                // onChange={handleChange}
+                // name="accounts"
+                onChange={handleRadioButton}
               />
             </div>
           </Card.Section>
