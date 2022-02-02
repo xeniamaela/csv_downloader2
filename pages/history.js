@@ -15,11 +15,26 @@ const History = ({ authAxios }) => {
     });
   }, [authAxios]);
 
-  const contentType = ["text", "text"];
   const heading = ["保存名", "保存日時"];
 
   // const exports = [];
   // exportData.map((data) => exports.push([data.export_name, data.export_date]));
+
+  const handleDeleteHistory = async (exportId) => {
+    console.log(exportId);
+
+    // authAxios
+    //   .delete("/delete-history", {
+    //     exportId: exportId,
+    //   })
+    //   .then((result) => console.log(result))
+    //   .catch((error) => console.log(error.response.data));
+    // const exportItemIndex = exportData.findIndex(
+    //   (exportItem) => exportItem.id.valueOf() === exportId
+    // );
+
+    // return exportData.splice(exportItemIndex, 1);
+  };
 
   const exports = exportData.map((data) => {
     return data;
@@ -51,7 +66,13 @@ const History = ({ authAxios }) => {
                   <button className="btnGreen">編集</button>
                   {/* edit */}
 
-                  <button className="btnRed">削除</button>
+                  <button
+                    className="btnRed"
+                    id={e.id}
+                    onClick={() => handleDeleteHistory(e.id)}
+                  >
+                    削除
+                  </button>
                   {/* delete */}
 
                   <button className="btnBlue">

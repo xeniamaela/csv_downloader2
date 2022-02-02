@@ -7,10 +7,15 @@ import {
   TextField,
   RadioButton,
   Modal,
+  Button,
 } from "@shopify/polaris";
 import { CSVLink } from "react-csv";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { DragHandleMinor, ChevronRightMinor } from "@shopify/polaris-icons";
+import {
+  DragHandleMinor,
+  ChevronRightMinor,
+  MobileCancelMajor,
+} from "@shopify/polaris-icons";
 
 const Customers = ({ authAxios }) => {
   const [whenReady, setWhenReady] = useState(false);
@@ -92,13 +97,40 @@ const Customers = ({ authAxios }) => {
   }, [authAxios]);
 
   const row = customers.map((customer) => {
+    let addressesData = customer.addresses
+      .map((address) => {
+        let data = [];
+        for (const [key, value] of Object.entries(address)) {
+          data.push(`${key} : ${value}`);
+        }
+        return data;
+      })
+      .join();
+
+    // let defaultAddressData = customer.default_address
+    //   .map((defaultAddress) => {
+    //     let data = [];
+    //     for (const [key, value] of Object.entries(defaultAddress)) {
+    //       data.push(`${key}: ${value}`);
+    //     }
+    //     return data;
+    //   })
+    //   .join();
+
+    let taxExemptionsData = customer.tax_exemptions
+      .map((taxExemptions) => {
+        let data = [];
+        for (const [key, value] of Object.entries(taxExemptions)) {
+          data.push(`${key}: ${value}`);
+        }
+        return data;
+      })
+      .join();
+
+    // console.log(customers);
     return {
       accepts_marketing: customer.accepts_marketing.toString(),
       accepts_marketing_updated_at: customer.accepts_marketing_updated_at,
-      addresses: customer.addresses.map((result) => {
-        let address = `${result.address1} , ${result.city} , ${result.country} , ${result.zip}`;
-        return address;
-      }),
       admin_graphql_api_id: customer.admin_graphql_api_id,
       created_at: customer.created_at,
       currency: customer.currency,
@@ -120,6 +152,9 @@ const Customers = ({ authAxios }) => {
       total_spent: customer.total_spent,
       updated_at: customer.updated_at,
       verified_email: customer.verified_email,
+      addresses: addressesData,
+      // default_address: defaultAddressData,
+      tax_exemptions: taxExemptionsData,
     };
   });
 
@@ -137,25 +172,6 @@ const Customers = ({ authAxios }) => {
   }, []);
 
   const [headerOrder, setHeaderOrder] = useState(headings);
-
-  const handleOnDragEnd = (result) => {
-    if (!result.destination) return;
-
-    const items = Array.from(headerOrder);
-    let [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    setHeaderOrder(items);
-  };
-
-  let sortedRow = [];
-  headerOrder.map((head) => sortedRow.push(head.key));
-
-  const valuesOrder = row.map((member) => {
-    return JSON.parse(JSON.stringify(member, sortedRow));
-  });
-
-  console.log(valuesOrder);
 
   const handleRename = (head, updatedValue) => {
     const elements = headerOrder.map((newArrangement) => {
@@ -177,6 +193,66 @@ const Customers = ({ authAxios }) => {
       空カラムを追加
     </button>
   );
+
+  const handleRemoveColumn = (columnName) => {
+    alert(`hello! ${columnName}`);
+    console.log(columnName);
+    // const headerOrderIndex = headerOrder.findIndex((headerItem) => {
+    //   headerItem.key.valueOf() === columnName;
+    // });
+
+    // console.log(headerOrderIndex);
+
+    // return headings.splice(headerOrderIndex, 1);
+  };
+
+  const handleAddColumn = () => {
+    valuesOrder.push({
+      label: "empty column",
+      key: "",
+    });
+  };
+
+  const [pickedHeaders, setPickedHeaders] = useState(chosenHeaders);
+  const stackBtnHeaders = (
+    <div>
+      <Stack>
+        {headerOrder.map((header) => {
+          return (
+            <Button onClick={() => handleShowHeader(header.key)}>
+              {header.label}
+            </Button>
+          );
+        })}
+      </Stack>
+    </div>
+  );
+
+  const chosenHeaders = [];
+  const handleShowHeader = (headerKey) => {
+    chosenHeaders.push({ label: headerKey, key: headerKey });
+    console.log(chosenHeaders);
+    setPickedHeaders(chosenHeaders);
+  };
+
+  const handleOnDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const items = Array.from(headerOrder);
+    let [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setHeaderOrder(items);
+  };
+
+  let sortedHeader = [];
+  headerOrder.map((head) => sortedHeader.push(head.key));
+
+  const valuesOrder = row.map((member) => {
+    return JSON.parse(JSON.stringify(member, sortedHeader));
+  });
+
+  // console.log(valuesOrder);
 
   const dragAndDrop = whenReady ? (
     <div className="dndContainer">
@@ -211,9 +287,7 @@ const Customers = ({ authAxios }) => {
                             </Stack>
                           </div>
                           <div className="margin-auto">
-                            <Stack>
-                              <Icon source={ChevronRightMinor} color="base" />
-                            </Stack>
+                            <Icon source={ChevronRightMinor} color="base" />
                           </div>
                           <div></div>
                           <div>
@@ -225,6 +299,15 @@ const Customers = ({ authAxios }) => {
                               autoComplete="off"
                               placeholder={head.label}
                             />
+                          </div>
+                          <div></div>
+                          <div className="margin-auto">
+                            <button
+                              className="btnDeleteX"
+                              onClick={() => handleRemoveColumn(head.key)}
+                            >
+                              <Icon source={MobileCancelMajor} color="base" />
+                            </button>
                           </div>
                         </div>
                       </li>
@@ -262,7 +345,7 @@ const Customers = ({ authAxios }) => {
       <RadioButton
         label="商品に関する項目" //items related to products
         // checked={value === "disabled"}
-        id="printHeaderLine"
+        id="itemsRelatedToProducts"
         name="accounts"
         // onChange={handleChange}
       />
@@ -270,7 +353,7 @@ const Customers = ({ authAxios }) => {
       <RadioButton
         label="注文に関する項目" //items related to orders
         // checked={value === "disabled"}
-        id="doNotPrintHeaderLine"
+        id="itemsRelatedToOrders"
         name="accounts"
         // onChange={handleChange}
       />
@@ -278,7 +361,7 @@ const Customers = ({ authAxios }) => {
       <RadioButton
         label="会員に関する項目" //items related to members
         // checked={value === "disabled"}
-        id="doNotPrintHeaderLine"
+        id="itemsRelatedToMembers"
         name="accounts"
         // onChange={handleChange}
       />
@@ -300,6 +383,7 @@ const Customers = ({ authAxios }) => {
         {/*column customization */}
         <Card>
           <Card.Section>
+            {stackBtnHeaders}
             {dragAndDrop}
             <div className="btnContainer">
               <Modal
@@ -321,7 +405,9 @@ const Customers = ({ authAxios }) => {
                 <Modal.Section>{radioButtonsAddColumn}</Modal.Section>
               </Modal>
               {/*add empty column */}
-              <button className="btnBlue">新しいカラムを追加</button>
+              <button className="btnBlue" onClick={handleAddColumn}>
+                新しいカラムを追加
+              </button>
               {/*add new column */}
             </div>
           </Card.Section>

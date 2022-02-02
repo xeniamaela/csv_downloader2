@@ -121,7 +121,7 @@ app.prepare().then(async () => {
         });
         const sId = data.body.shop.id;
         con.query(
-          `SELECT export_name, export_date FROM history WHERE shop_id = ${sId}`,
+          `SELECT export_name, export_date, id FROM history WHERE shop_id = ${sId}`,
           (err, result) => {
             if (!err) {
               resolve({ status: 200, body: result });
@@ -134,6 +134,34 @@ app.prepare().then(async () => {
     }
     ctx.body = await getData();
   });
+
+  // router.delete("/delete-history", verifyRequest(), koaBody(), async (ctx) => {
+  //   const data = ctx.request.body;
+  //   const exportId = data.exportId;
+  //   console.log(data, "hello");
+  //   console.log(exportId, "exportId");
+  //   const session = await Shopify.Utils.loadCurrentSession(ctx.req, ctx.res);
+  //   const client = new Shopify.Clients.Rest(session.shop, session.accessToken);
+  //   async function getData() {
+  //     return new Promise(async (resolve, reject) => {
+  //       const data = await client.get({
+  //         path: "shop",
+  //       });
+  //       const sId = data.body.shop.id;
+  //       con.query(
+  //         `DELETE FROM history WHERE id = ${exportId} AND shop_id = ${sId}`,
+  //         (err, result) => {
+  //           if (!err) {
+  //             resolve({ status: 200, body: result });
+  //           } else {
+  //             reject({ status: 500 });
+  //           }
+  //         }
+  //       );
+  //     });
+  //   }
+  //   ctx.body = await getData();
+  // });
 
   router.get(
     "/customers",

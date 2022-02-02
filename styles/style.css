@@ -59,6 +59,11 @@
   color: white;
 }
 
+.btnDeleteX {
+  border: none;
+  margin: auto;
+}
+
 .linkBlue {
   background-color: #5866bc;
   color: white;
@@ -83,8 +88,8 @@
 .header-container {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 300px 30px 20px auto;
-      grid-template-columns: 300px 30px 20px auto;
+  -ms-grid-columns: 300px 30px 20px auto 5px 20px;
+      grid-template-columns: 300px 30px 20px auto 5px 20px;
   margin: 0px 10px;
 }
 
